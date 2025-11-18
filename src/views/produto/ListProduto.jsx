@@ -68,7 +68,7 @@ export default function ListProduto() {
 
                                     <Table.Row key={produto.id}>
                                         <Table.Cell>{produto.titulo}</Table.Cell>
-                                        <Table.Cell>{produto.codigoProduto}</Table.Cell>
+                                        <Table.Cell>{produto.codigo}</Table.Cell>
                                         <Table.Cell>{formatarValor(produto.valorUnitario)}</Table.Cell>
                                         <Table.Cell>{produto.tempoEntregaMinimo} min</Table.Cell>
                                         <Table.Cell>{produto.tempoEntregaMaximo} min</Table.Cell>
@@ -80,7 +80,7 @@ export default function ListProduto() {
                                                 color='green'
                                                 title='Clique aqui para editar os dados deste produto'
                                                 icon>
-                                                <Icon name='edit'/>
+                                                <Link to="/form-produto" state={{id: produto.id}} style={{color: 'green'}}> <Icon name='edit' /> </Link>
                                             </Button> &nbsp;
 
                                             <Button

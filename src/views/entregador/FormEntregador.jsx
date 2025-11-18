@@ -1,9 +1,9 @@
 import InputMask from 'comigo-tech-react-input-mask';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import axios from "axios";
 import MenuSistema from "../../MenuSistema";
-import {Link} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function FormEntregador() {
     const [nome, setNome] = useState('');
@@ -22,6 +22,92 @@ export default function FormEntregador() {
     const [enderecoCep, setEnderecoCep] = useState('');
     const [enderecoUf, setEnderecoUf] = useState('');
     const [ativo, setAtivo] = useState(true);
+
+    const { state } = useLocation();
+    const [idEntregador, setIdEntregador] = useState();
+
+    useEffect(() => {
+        if (state != null && state.id != null) {
+            axios.get("http://localhost:8080/api/entregador/" + state.id)
+                .then((response) => {
+                    setIdEntregador(response.data.id)
+                    setNome(response.data.nome)
+                    setCpf(response.data.cpf)
+                    setRg(response.data.rg)
+                    setDataNascimento(response.data.dataNascimento)
+                    setFoneCelular(response.data.foneCelular)
+                    setFoneFixo(response.data.foneFixo)
+                    setQtdEntregasRealizadas(response.data.qtdEntregasRealizadas)
+                    setValorFrete(response.data.valorFrete)
+                    setEnderecoRua(response.data.enderecoRua)
+                    setEnderecoComplemento(response.data.enderecoComplemento)
+                    setEnderecoNumero(response.data.enderecoNumero)
+                    setEnderecoBairro(response.data.enderecoBairro)
+                    setEnderecoCidade(response.data.enderecoCidade)
+                    setEnderecoCep(response.data.enderecoCep)
+                    setEnderecoUf(response.data.enderecoUf)
+                    setAtivo(response.data.ativo)
+                })
+        }
+    }, [state])
+
+    function salvar() {
+
+        let entregadorRequest = {
+            nome: nome,
+            cpf: cpf,
+            rg: rg,
+            dataNascimento: dataNascimento,
+            foneCelular: foneCelular,
+            foneFixo: foneFixo,
+            qtdEntregasRealizadas: qtdEntregasRealizadas,
+            valorFrete: valorFrete,
+            enderecoRua: enderecoRua,
+            enderecoComplemento: enderecoComplemento,
+            enderecoNumero: enderecoNumero,
+            enderecoBairro: enderecoBairro,
+            enderecoCidade: enderecoCidade,
+            enderecoCep: enderecoCep,
+            enderecoUf: enderecoUf,
+            ativo: ativo
+        }
+
+        if (idEntregador != null) { //Alteração:
+            axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
+                .then((response) => { console.log('Entregador alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alter um entregador.') })
+        } else { //Cadastro:
+            axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+                .then((response) => {
+                    console.log('Entregador cadastrado com sucesso.')
+                    limparFormulario();
+                })
+                .catch((error) => { console.log('Erro ao incluir o entregador.') })
+        }
+    }
+
+    function limparFormulario() {
+        setNome('');
+        setCpf('');
+        setRg('');
+        setDataNascimento('');
+        setFoneCelular('');
+        setFoneFixo('');
+        setQtdEntregasRealizadas('');
+        setValorFrete('');
+        setEnderecoRua('');
+        setEnderecoComplemento('');
+        setEnderecoNumero('');
+        setEnderecoBairro('');
+        setEnderecoCidade('');
+        setEnderecoCep('');
+        setEnderecoUf('');
+        setAtivo(true);
+    }
+
+    const handleAtivoChange = (e, { value }) => {
+        setAtivo(value === 'sim');
+    };
 
     const estadosBrasileiros = [
         { value: 'AC', text: 'Acre' },
@@ -53,79 +139,30 @@ export default function FormEntregador() {
         { value: 'TO', text: 'Tocantins' }
     ];
 
-    function salvar() {
-        let entregadorRequest = {
-            nome: nome,
-            cpf: cpf,
-            rg: rg,
-            dataNascimento: dataNascimento,
-            foneCelular: foneCelular,
-            foneFixo: foneFixo,
-            qtdEntregasRealizadas: parseInt(qtdEntregasRealizadas),
-            valorFrete: parseFloat(valorFrete),
-            enderecoRua: enderecoRua,
-            enderecoComplemento: enderecoComplemento,
-            enderecoNumero: enderecoNumero,
-            enderecoBairro: enderecoBairro,
-            enderecoCidade: enderecoCidade,
-            enderecoCep: enderecoCep,
-            enderecoUf: enderecoUf,
-            ativo: ativo
-        }
-
-        axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-            .then((response) => {
-                console.log('Entregador cadastrado com sucesso.')
-                // Limpar o formulário após salvar
-                limparFormulario();
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o entregador.')
-            })
-    }
-
-    function limparFormulario() {
-        setNome('');
-        setCpf('');
-        setRg('');
-        setDataNascimento('');
-        setFoneCelular('');
-        setFoneFixo('');
-        setQtdEntregasRealizadas('');
-        setValorFrete('');
-        setEnderecoRua('');
-        setEnderecoComplemento('');
-        setEnderecoNumero('');
-        setEnderecoBairro('');
-        setEnderecoCidade('');
-        setEnderecoCep('');
-        setEnderecoUf('');
-        setAtivo(true);
-    }
-
-    function voltar() {
-        // Lógica para voltar
-        console.log('Voltar');
-    }
-
-    const handleAtivoChange = (e, { value }) => {
-        setAtivo(value === 'sim');
-    };
-
     return (
         <div>
-
             <MenuSistema tela={'entregador'} />
 
             <div style={{marginTop: '3%'}}>
                 <Container textAlign='justified' >
-                    <h2>
-                        <span style={{color: 'darkgray'}}>
-                            Entregador &nbsp;
-                            <Icon name='angle double right' size="small" />
-                        </span>
-                        Cadastro
-                    </h2>
+                    { idEntregador === undefined &&
+                        <h2>
+                            <span style={{color: 'darkgray'}}>
+                                Entregador &nbsp;
+                                <Icon name='angle double right' size="small" />
+                            </span>
+                            Cadastro
+                        </h2>
+                    }
+                    { idEntregador != undefined &&
+                        <h2>
+                            <span style={{color: 'darkgray'}}>
+                                Entregador &nbsp;
+                                <Icon name='angle double right' size="small" />
+                            </span>
+                            Alteração
+                        </h2>
+                    }
 
                     <Divider />
 
@@ -175,7 +212,6 @@ export default function FormEntregador() {
                                     fluid
                                     label='DT Nascimento'
                                     width={6}
-                                    placeholder="Ex: 20/03/1985"
                                 >
                                     <InputMask
                                         mask="99/99/9999"
@@ -220,30 +256,17 @@ export default function FormEntregador() {
                                     value={qtdEntregasRealizadas}
                                     onChange={(e) => setQtdEntregasRealizadas(e.target.value)}
                                     placeholder="0"
-                                >
-                                    <InputMask
-                                        mask="999999"
-                                        maskChar={null}
-                                        value={qtdEntregasRealizadas}
-                                        onChange={(e) => setQtdEntregasRealizadas(e.target.value)}
-                                        placeholder="0"
-                                    />
-                                </Form.Input>
+                                />
 
                                 <Form.Input
                                     required
                                     fluid
                                     label='Valor Por Frete'
                                     width={6}
-                                >
-                                    <InputMask
-                                        mask="R$ 999.99"
-                                        maskChar={null}
-                                        value={valorFrete}
-                                        onChange={(e) => setValorFrete(e.target.value)}
-                                        placeholder="R$ 0,00"
-                                    />
-                                </Form.Input>
+                                    value={valorFrete}
+                                    onChange={(e) => setValorFrete(e.target.value)}
+                                    placeholder="0.00"
+                                />
                             </Form.Group>
 
                             <Form.Group widths='equal'>
