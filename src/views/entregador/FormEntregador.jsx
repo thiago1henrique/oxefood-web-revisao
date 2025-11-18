@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import axios from "axios";
 import MenuSistema from "../../MenuSistema";
+import {Link} from "react-router-dom";
 
 export default function FormEntregador() {
     const [nome, setNome] = useState('');
@@ -353,18 +354,17 @@ export default function FormEntregador() {
                         </Form>
 
                         <div style={{marginTop: '4%'}}>
-                            <Button
-                                type="button"
-                                inverted
-                                circular
-                                icon
-                                labelPosition='left'
-                                color='orange'
-                                onClick={voltar}
-                            >
-                                <Icon name='reply' />
-                                Voltar
-                            </Button>
+                            <Link to={'/list-entregador'}>
+                                <Button
+                                    inverted
+                                    circular
+                                    icon
+                                    labelPosition='left'
+                                    color='orange'
+                                >
+                                    <Icon name='reply' /> Voltar
+                                </Button>
+                            </Link>
 
                             <Button
                                 type="submit"
