@@ -1,9 +1,25 @@
 import InputMask from 'comigo-tech-react-input-mask';
 import React, { useState } from "react";
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import axios from "axios";
 
-export default function FormEntregador () {
-    const [ativo, setAtivo] = useState('sim');
+export default function FormEntregador() {
+    const [nome, setNome] = useState('');
+    const [cpf, setCpf] = useState('');
+    const [rg, setRg] = useState('');
+    const [dataNascimento, setDataNascimento] = useState('');
+    const [foneCelular, setFoneCelular] = useState('');
+    const [foneFixo, setFoneFixo] = useState('');
+    const [qtdEntregasRealizadas, setQtdEntregasRealizadas] = useState('');
+    const [valorFrete, setValorFrete] = useState('');
+    const [enderecoRua, setEnderecoRua] = useState('');
+    const [enderecoComplemento, setEnderecoComplemento] = useState('');
+    const [enderecoNumero, setEnderecoNumero] = useState('');
+    const [enderecoBairro, setEnderecoBairro] = useState('');
+    const [enderecoCidade, setEnderecoCidade] = useState('');
+    const [enderecoCep, setEnderecoCep] = useState('');
+    const [enderecoUf, setEnderecoUf] = useState('');
+    const [ativo, setAtivo] = useState(true);
 
     const estadosBrasileiros = [
         { value: 'AC', text: 'Acre' },
@@ -35,66 +51,133 @@ export default function FormEntregador () {
         { value: 'TO', text: 'Tocantins' }
     ];
 
+    function salvar() {
+        let entregadorRequest = {
+            nome: nome,
+            cpf: cpf,
+            rg: rg,
+            dataNascimento: dataNascimento,
+            foneCelular: foneCelular,
+            foneFixo: foneFixo,
+            qtdEntregasRealizadas: parseInt(qtdEntregasRealizadas),
+            valorFrete: parseFloat(valorFrete),
+            enderecoRua: enderecoRua,
+            enderecoComplemento: enderecoComplemento,
+            enderecoNumero: enderecoNumero,
+            enderecoBairro: enderecoBairro,
+            enderecoCidade: enderecoCidade,
+            enderecoCep: enderecoCep,
+            enderecoUf: enderecoUf,
+            ativo: ativo
+        }
+
+        axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+            .then((response) => {
+                console.log('Entregador cadastrado com sucesso.')
+                // Limpar o formulário após salvar
+                limparFormulario();
+            })
+            .catch((error) => {
+                console.log('Erro ao incluir o entregador.')
+            })
+    }
+
+    function limparFormulario() {
+        setNome('');
+        setCpf('');
+        setRg('');
+        setDataNascimento('');
+        setFoneCelular('');
+        setFoneFixo('');
+        setQtdEntregasRealizadas('');
+        setValorFrete('');
+        setEnderecoRua('');
+        setEnderecoComplemento('');
+        setEnderecoNumero('');
+        setEnderecoBairro('');
+        setEnderecoCidade('');
+        setEnderecoCep('');
+        setEnderecoUf('');
+        setAtivo(true);
+    }
+
+    function voltar() {
+        // Lógica para voltar
+        console.log('Voltar');
+    }
+
     const handleAtivoChange = (e, { value }) => {
-        setAtivo(value);
+        setAtivo(value === 'sim');
     };
 
     return (
-
         <div>
-
             <div style={{marginTop: '3%'}}>
-
                 <Container textAlign='justified' >
-
-                    <h2> <span style={{color: 'darkgray'}}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+                    <h2>
+                        <span style={{color: 'darkgray'}}>
+                            Entregador &nbsp;
+                            <Icon name='angle double right' size="small" />
+                        </span>
+                        Cadastro
+                    </h2>
 
                     <Divider />
 
                     <div style={{marginTop: '4%'}}>
-
                         <Form>
-
                             <Form.Group widths='equal'>
-
                                 <Form.Input
                                     required
                                     fluid
                                     label='Nome'
                                     maxLength="100"
                                     width={8}
+                                    value={nome}
+                                    onChange={(e) => setNome(e.target.value)}
+                                    placeholder="Digite o nome completo"
                                 />
 
                                 <Form.Input
                                     required
                                     fluid
-                                    label='CPF'>
+                                    label='CPF'
+                                >
                                     <InputMask
                                         required
                                         mask="999.999.999-99"
+                                        value={cpf}
+                                        onChange={(e) => setCpf(e.target.value)}
+                                        placeholder="000.000.000-00"
                                     />
                                 </Form.Input>
 
                                 <Form.Input
                                     fluid
-                                    label='RG'>
+                                    label='RG'
+                                >
                                     <InputMask
-                                        mask="(99) 9999.9999"
+                                        mask="99.999.999-9"
+                                        value={rg}
+                                        onChange={(e) => setRg(e.target.value)}
+                                        placeholder="00.000.000-0"
                                     />
                                 </Form.Input>
-
                             </Form.Group>
 
                             <Form.Group>
-
                                 <Form.Input
                                     fluid
                                     label='DT Nascimento'
                                     width={6}
-                                    placeholder={"Ex:20/03/1985"}
+                                    placeholder="Ex: 20/03/1985"
                                 >
                                     <InputMask
                                         mask="99/99/9999"
+                                        maskChar={null}
+                                        value={dataNascimento}
+                                        onChange={(e) => setDataNascimento(e.target.value)}
+                                        placeholder="Ex: 20/03/1985"
                                     />
                                 </Form.Input>
 
@@ -103,39 +186,71 @@ export default function FormEntregador () {
                                     fluid
                                     label='Fone Celular'
                                     width={6}
-                                />
+                                >
+                                    <InputMask
+                                        mask="(99) 99999-9999"
+                                        value={foneCelular}
+                                        onChange={(e) => setFoneCelular(e.target.value)}
+                                        placeholder="(00) 00000-0000"
+                                    />
+                                </Form.Input>
 
                                 <Form.Input
-                                    required
                                     fluid
                                     label='Fone Fixo'
                                     width={6}
-                                />
+                                >
+                                    <InputMask
+                                        mask="(99) 9999-9999"
+                                        value={foneFixo}
+                                        onChange={(e) => setFoneFixo(e.target.value)}
+                                        placeholder="(00) 0000-0000"
+                                    />
+                                </Form.Input>
 
                                 <Form.Input
-                                    required
                                     fluid
                                     label='QTD Entregas Realizadas'
                                     width={6}
-                                />
+                                    value={qtdEntregasRealizadas}
+                                    onChange={(e) => setQtdEntregasRealizadas(e.target.value)}
+                                    placeholder="0"
+                                >
+                                    <InputMask
+                                        mask="999999"
+                                        maskChar={null}
+                                        value={qtdEntregasRealizadas}
+                                        onChange={(e) => setQtdEntregasRealizadas(e.target.value)}
+                                        placeholder="0"
+                                    />
+                                </Form.Input>
 
                                 <Form.Input
                                     required
                                     fluid
                                     label='Valor Por Frete'
                                     width={6}
-                                />
-
+                                >
+                                    <InputMask
+                                        mask="R$ 999.99"
+                                        maskChar={null}
+                                        value={valorFrete}
+                                        onChange={(e) => setValorFrete(e.target.value)}
+                                        placeholder="R$ 0,00"
+                                    />
+                                </Form.Input>
                             </Form.Group>
 
                             <Form.Group widths='equal'>
-
                                 <Form.Input
                                     required
                                     fluid
                                     label='Rua'
                                     maxLength="100"
                                     width={12}
+                                    value={enderecoRua}
+                                    onChange={(e) => setEnderecoRua(e.target.value)}
+                                    placeholder="Digite o nome da rua"
                                 />
 
                                 <Form.Input
@@ -143,19 +258,22 @@ export default function FormEntregador () {
                                     fluid
                                     label='Número'
                                     width={4}
-                                >
-                                </Form.Input>
-
+                                    value={enderecoNumero}
+                                    onChange={(e) => setEnderecoNumero(e.target.value)}
+                                    placeholder="Nº"
+                                />
                             </Form.Group>
 
                             <Form.Group widths='equal'>
-
                                 <Form.Input
                                     required
                                     fluid
                                     label='Bairro'
                                     maxLength="100"
                                     width={6}
+                                    value={enderecoBairro}
+                                    onChange={(e) => setEnderecoBairro(e.target.value)}
+                                    placeholder="Digite o bairro"
                                 />
 
                                 <Form.Input
@@ -163,8 +281,10 @@ export default function FormEntregador () {
                                     fluid
                                     label='Cidade'
                                     width={6}
-                                >
-                                </Form.Input>
+                                    value={enderecoCidade}
+                                    onChange={(e) => setEnderecoCidade(e.target.value)}
+                                    placeholder="Digite a cidade"
+                                />
 
                                 <Form.Input
                                     required
@@ -172,8 +292,13 @@ export default function FormEntregador () {
                                     label='CEP'
                                     width={4}
                                 >
+                                    <InputMask
+                                        mask="99999-999"
+                                        value={enderecoCep}
+                                        onChange={(e) => setEnderecoCep(e.target.value)}
+                                        placeholder="00000-000"
+                                    />
                                 </Form.Input>
-
                             </Form.Group>
 
                             <Form.Group widths='equal'>
@@ -184,16 +309,20 @@ export default function FormEntregador () {
                                     options={estadosBrasileiros}
                                     placeholder='Selecione o estado'
                                     width={16}
+                                    value={enderecoUf}
+                                    onChange={(e, { value }) => setEnderecoUf(value)}
                                 />
                             </Form.Group>
 
                             <Form.Group widths='equal'>
                                 <Form.Input
-                                    required
                                     fluid
                                     label='Complemento'
                                     maxLength="100"
                                     width={16}
+                                    value={enderecoComplemento}
+                                    onChange={(e) => setEnderecoComplemento(e.target.value)}
+                                    placeholder="Digite o complemento (opcional)"
                                 />
                             </Form.Group>
 
@@ -205,23 +334,21 @@ export default function FormEntregador () {
                                     <Form.Radio
                                         label='Sim'
                                         value='sim'
-                                        checked={ativo === 'sim'}
+                                        checked={ativo === true}
                                         onChange={handleAtivoChange}
                                     />
                                     <Form.Radio
                                         label='Não'
                                         value='nao'
-                                        checked={ativo === 'nao'}
+                                        checked={ativo === false}
                                         onChange={handleAtivoChange}
                                         style={{marginLeft: '20px'}}
                                     />
                                 </Form.Group>
                             </Form.Group>
-
                         </Form>
 
                         <div style={{marginTop: '4%'}}>
-
                             <Button
                                 type="button"
                                 inverted
@@ -229,31 +356,29 @@ export default function FormEntregador () {
                                 icon
                                 labelPosition='left'
                                 color='orange'
+                                onClick={voltar}
                             >
                                 <Icon name='reply' />
                                 Voltar
                             </Button>
 
                             <Button
+                                type="submit"
                                 inverted
                                 circular
                                 icon
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
+                                onClick={salvar}
                             >
                                 <Icon name='save' />
                                 Salvar
                             </Button>
-
                         </div>
-
                     </div>
-
                 </Container>
             </div>
         </div>
-
     );
-
 }
